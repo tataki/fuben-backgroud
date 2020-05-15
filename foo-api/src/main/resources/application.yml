@@ -28,3 +28,9 @@ spring:
 mybatis:
   type-aliases-package: com.orange.pojo
   mapper-locations: classpath:mapper/*.xml
+
+## mybatis mapper 配置
+mapper:
+  mappers: com.foo.my.mapper.MyMapper
+  not-empty: false
+  identity: MYSQL
