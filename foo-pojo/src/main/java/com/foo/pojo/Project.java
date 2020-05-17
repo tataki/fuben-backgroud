@@ -12,7 +12,7 @@ public class Project {
 
     private String des;
 
-    private Byte status;
+    private Integer status;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -62,14 +62,14 @@ public class Project {
     /**
      * @return status
      */
-    public Byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
     /**
      * @param status
      */
-    public void setStatus(Byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

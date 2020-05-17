@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foo.mapper.ProjectMapperCustom">
+  <resultMap id="myVO" type="com.foo.pojo.vo.ProjectVO">
+    <id column="id" property="id" />
+    <result column="title" property="title" />
+    <result column="des" property="des" />
+    <collection property="SubUserList" ofType="com.foo.pojo.vo.SubUserVO" >
+      <result column="name" property="name"/>
+		<result column="front_image" property="frontImage"/>
+    </collection>
+  </resultMap>
+  <select id="getAllProjectWithSubUser" resultMap="myVO">
+SELECT
+    p.id,
+	p.title,
+	p.des,
+	u.name,
+	u.front_image
+FROM
+	project p
+left join
+	project_user pu
+on
+	p.id = pu.project_id
+LEFT JOIN
+	`user` u
+on
+	u.id = pu.user_id
+  </select>
+  <select id="getProjectWithSubUser" resultMap="myVO" parameterType="int">
+SELECT
+    p.id,
+	p.title,
+	p.des,
+	u.name
+FROM
+	project p
+left join
+	project_user pu
+on
+	p.id = pu.project_id
+LEFT JOIN
+	`user` u
+on
+	u.id = pu.user_id
+WHERE p.id = #{id}
+  </select>
+</mapper>

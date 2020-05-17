@@ -10,5 +10,6 @@
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="font_image" jdbcType="VARCHAR" property="frontImage" />
   </resultMap>
 </mapper>

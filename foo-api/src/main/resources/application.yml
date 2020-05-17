@@ -8,16 +8,18 @@ server:
 
 ## 配置数据源
 spring:
+  profiles:
+    active: prod
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/foo?userUnicode=true&charactorEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/foo?userUnicode=true&charactorEncoding=UTF-8&useSSL=false
     username: root
-    password: root
+    password: 123456
   hikari:
     connect-timeout: 30000 # 等待连接池分配时间的最长时间
-    minimum-idle: 5 # 最小连接数
-    maximum-pool-size: 20 # 最大连接数，处理器x2向上取整
+    minimum-idle: 3 # 最小连接数
+    maximum-pool-size: 3 # 最大连接数，处理器x2向上取整
     auto-commit: true
     idel-timeout: 600000 # 连接超时时间
     pool-name: DateSourceHikariCP # 连接池名字
@@ -34,3 +36,13 @@ mapper:
   mappers: com.foo.my.mapper.MyMapper
   not-empty: false
   identity: MYSQL
+
+## 上传文件配置
+upload:
+  uploadPath: /Users/orange/WebProject/img/
+
+
+## mybatis-pagehelper 配置
+pagehelper:
+  helper-dialect: mysql
+  support-methods-arguments: true

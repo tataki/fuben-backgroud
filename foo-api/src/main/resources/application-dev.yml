@@ -1,0 +1,5 @@
+server:
+  port: 8088
+## 上传文件配置
+upload:
+  uploadPath: /Users/orange/WebProject/img/

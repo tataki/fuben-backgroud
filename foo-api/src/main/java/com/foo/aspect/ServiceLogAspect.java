@@ -30,7 +30,7 @@ public class ServiceLogAspect {
      * @return
      * @throws Throwable
      */
-    @Around("execution(* com.foo.service.impl..*.*(..))")
+    @Around("execution(* com.foo.service.impl.*.*(..))")
     public Object recordTimeLog(ProceedingJoinPoint joinPoint) throws Throwable{
         log.info("===== 开始执行 {}.{} ====="
                 ,joinPoint.getTarget().getClass().getName()

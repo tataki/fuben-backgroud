@@ -1,9 +1,14 @@
 package com.foo.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.foo.common.utils.FileUtils;
+
 import javax.persistence.Column;
+import javax.persistence.Id;
 import java.util.Date;
 
 public class User {
+    @Id
     private Integer id;
 
     private String name;
@@ -14,6 +19,17 @@ public class User {
 
     @Column(name = "create_time")
     private Date createTime;
+
+    @Column(name = "front_image")
+    private String frontImage;
+
+    public String getFrontImage() {
+        return frontImage;
+    }
+
+    public void setFrontImage(String frontImage) {
+        this.frontImage = frontImage;
+    }
 
     /**
      * @return id
@@ -84,4 +100,5 @@ public class User {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
 }
