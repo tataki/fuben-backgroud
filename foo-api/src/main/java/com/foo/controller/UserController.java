@@ -5,11 +5,13 @@ import com.foo.common.utils.*;
 import com.foo.pojo.User;
 import com.foo.pojo.bo.CenterUserBO;
 import com.foo.pojo.bo.UserBO;
+import com.foo.pojo.vo.UserVO;
 import com.foo.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.validation.BindingResult;
@@ -23,12 +25,15 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Api(value = "用户相关", tags = {"用户相关接口"})
 @RestController
 @RequestMapping("user")
-public class UserController {
+public class UserController extends BaseController {
     private final Logger logger = Logger.getLogger(UserController.class);
+    @Autowired
+    private RedisOperator redisOperator;
     @Autowired
     private UserService userService;
     @Autowired
@@ -70,8 +75,22 @@ public class UserController {
         }
         CookieUtils.setCookie(httpServletRequest,httpServletResponse
                 ,"user", JsonUtils.objectToJson(userBO));
-        userService.createUser(userBO);
+        User userResult = userService.createUser(userBO);
+        // 实现用户的redis会话
+        UserVO userVO = conventUserVO(userResult);
+
+        CookieUtils.setCookie(httpServletRequest,httpServletResponse,"user",JsonUtils.objectToJson(userVO),true);
         return JSONResult.ok();
+    }
+
+    private UserVO conventUserVO(User user){
+        // 实现用户的redis会话
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        redisOperator.set(REDIS_USER_TOKEN+":"+user.getId(),uniqueToken);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user,userVO);
+        userVO.setUserUniqueToken(uniqueToken);
+        return userVO;
     }
 
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
@@ -92,11 +111,8 @@ public class UserController {
         if(result == null){
             return JSONResult.errorMsg("用户名或密码不正确");
         }
-        result.setCreateTime(null);
-        result.setPassword(null);
-        result.setFrontImage(FileUtils.getUrl("127.0.0.1","8088",result.getFrontImage()));
-        CookieUtils.setCookie(httpServletRequest,httpServletResponse
-        ,"user", JsonUtils.objectToJson(result),true);
+        UserVO userVO = conventUserVO(result);
+        CookieUtils.setCookie(httpServletRequest,httpServletResponse,"user",JsonUtils.objectToJson(userVO),true);
         return JSONResult.ok(result);
     }
     @ApiOperation(value = "用户退出登录", notes = "用户退出登录", httpMethod = "POST")
@@ -105,8 +121,8 @@ public class UserController {
             , HttpServletResponse httpServletResponse){
         //清楚用户cookie
         CookieUtils.deleteCookie(httpServletRequest,httpServletResponse,"user");
-        //TODO 用户退出登录需要清除购物车
-        //TODO 分布式会话需要清除用户数据
+        // 清除redis中的会话信息
+        redisOperator.del(REDIS_USER_TOKEN+":"+userId);
         return JSONResult.ok();
     }
     @ApiOperation(value = "上传用户头像", notes = "用户退出登录", httpMethod = "POST")
@@ -126,6 +142,7 @@ public class UserController {
            Map<String,String> errorMap = getErrors(result);
            return JSONResult.errorMap(errorMap);
         }
+        userService.updateUser(userId,centerUserBO);
         return JSONResult.ok();
     }
 

@@ -9,7 +9,7 @@ server:
 ## 配置数据源
 spring:
   profiles:
-    active: prod
+    active: dev
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -25,7 +25,8 @@ spring:
     pool-name: DateSourceHikariCP # 连接池名字
     max-lifetime: 1800000 # 连接的生命时间，超时未被使用被释放
     connection-test-query: SELECT 1
-
+  session:
+    store-type: redis
 ## mybatis 配置
 mybatis:
   type-aliases-package: com.orange.pojo

@@ -3,3 +3,8 @@ server:
 ## 上传文件配置
 upload:
   uploadPath: /Users/orange/WebProject/img/
+spring:
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379

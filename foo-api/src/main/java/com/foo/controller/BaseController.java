@@ -21,4 +21,5 @@ import javax.servlet.http.HttpServletResponse;
 public class BaseController {
     private final Logger logger = Logger.getLogger(BaseController.class);
     public static final Integer PAGE_SIZE = 10;
+    public static final String REDIS_USER_TOKEN = "redis_user_token";
 }
